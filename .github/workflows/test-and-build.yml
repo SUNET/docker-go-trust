@@ -104,6 +104,13 @@ jobs:
                   echo "Test command completed with exit code: $TEST_EXIT_CODE"
                   echo ""
 
+                  # Always show the full test output for debugging
+                  echo "=== COMPLETE TEST OUTPUT ==="
+                  cat test_output.log
+                  echo ""
+                  echo "=== END OF TEST OUTPUT ==="
+                  echo ""
+
                   # Show summary of what passed/failed from the log
                   echo "=== PACKAGE RESULTS ==="
                   grep -E "(^ok|^FAIL)" test_output.log || echo "No package results found"
@@ -116,19 +123,36 @@ jobs:
                     echo ""
                     echo "=== FAILURE ANALYSIS ==="
                     
+                    # Count passed vs failed packages
+                    PASSED_COUNT=$(grep -c "^ok" test_output.log || echo "0")
+                    FAILED_COUNT=$(grep -c "^FAIL" test_output.log || echo "0")
+                    echo "Packages passed: $PASSED_COUNT"
+                    echo "Packages failed: $FAILED_COUNT"
+                    echo ""
+                    
                     # Show any FAIL lines
                     echo "Failed packages:"
-                    grep "^FAIL" test_output.log || echo "No FAIL packages found"
+                    grep "^FAIL" test_output.log || echo "No explicitly FAIL-marked packages found"
+                    echo ""
+                    
+                    # Show any test failures (lines with FAIL but not package level)
+                    echo "Individual test failures:"
+                    grep -E "--- FAIL:" test_output.log || echo "No individual test failures found"
                     echo ""
                     
                     # Show any build errors
                     echo "Build/compile errors:"
-                    grep -i "build failed\|cannot find package\|undefined:" test_output.log || echo "No build errors found"
+                    grep -i "build failed\|cannot find package\|undefined:\|compilation failed" test_output.log || echo "No build errors found"
                     echo ""
                     
-                    # Show the last few lines for context
-                    echo "Last 20 lines of test output:"
-                    tail -20 test_output.log
+                    # Show any race conditions or panic
+                    echo "Race conditions or panics:"
+                    grep -i "race\|panic\|fatal error" test_output.log || echo "No race conditions or panics found"
+                    echo ""
+                    
+                    # Check if it's a coverage issue
+                    echo "Coverage-related issues:"
+                    grep -i "coverage\|profile" test_output.log || echo "No coverage issues found"
                     echo ""
                     
                     exit $TEST_EXIT_CODE
