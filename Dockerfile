@@ -53,7 +53,7 @@ RUN echo 'module github.com/SUNET/go-trust' > go.mod.new && \
     echo '' >> go.mod.new && \
     echo 'go 1.23' >> go.mod.new && \
     echo '' >> go.mod.new && \
-    # Copy require blocks from your controlled dependencies
+    # Copy require blocks from  controlled dependencies
     sed -n '/^require (/,/^)/{p}' /tmp/controlled-deps/go.mod >> go.mod.new && \
     echo '' >> go.mod.new && \
     # Copy replace directives
@@ -99,10 +99,11 @@ COPY --from=builder /build/go-trust .
 # Copy your service-specific configuration
 COPY  docker-go-trust/config/ /etc/go-trust/
 COPY  docker-go-trust/pipeline.yaml ./pipeline.yaml
+COPY  docker-go-trust/start.sh ./start.sh
 
-# Make binary executable
+# Make binary and script executable
 USER root
-RUN chmod +x go-trust
+RUN chmod +x go-trust start.sh
 USER gotrust
 
 # Expose the service port
@@ -112,5 +113,5 @@ EXPOSE 6001
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:6001/health || exit 1
 
-# Run go-trust binary built with controlled dependencies
-CMD ["sh", "-c", "./go-trust --host ${SERVICE_HOST} --port ${SERVICE_PORT} --log-level ${LOG_LEVEL} --frequency ${FREQUENCY} ${PIPELINE_FILE}"]
+# Run go-trust using start script with environment variables
+CMD ["./start.sh"]
