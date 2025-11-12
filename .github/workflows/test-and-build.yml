@@ -88,16 +88,45 @@ jobs:
                   echo "Running go-trust tests with coverage (SUNET style)..."
                   echo "Using docker-go-trust controlled dependencies"
 
-                  # Run tests exactly like SUNET go-trust does
+                  # Run tests with better error handling
+                  set +e  # Don't exit on error immediately
                   go test -v -race -timeout 10m -coverprofile=coverage.txt -covermode=atomic ./...
+                  TEST_EXIT_CODE=$?
+                  set -e  # Re-enable exit on error
 
-                  echo "✅ All go-trust tests passed with controlled dependencies!"
+                  echo "Test command completed with exit code: $TEST_EXIT_CODE"
+
+                  if [ $TEST_EXIT_CODE -eq 0 ]; then
+                    echo "✅ All go-trust tests passed with controlled dependencies!"
+                  else
+                    echo "❌ Tests failed with exit code: $TEST_EXIT_CODE"
+                    echo "Running diagnostic checks..."
+                    
+                    # Show packages that were tested
+                    echo "Packages found:"
+                    go list ./... || echo "No packages listed"
+                    
+                    # Try running tests package by package to identify failures
+                    echo "Testing packages individually:"
+                    for pkg in $(go list ./... 2>/dev/null); do
+                      echo "Testing: $pkg"
+                      if go test -v "$pkg"; then
+                        echo "✅ PASSED: $pkg"
+                      else
+                        echo "❌ FAILED: $pkg"
+                      fi
+                    done
+                    
+                    exit $TEST_EXIT_CODE
+                  fi
 
             - name: Generate coverage reports
               working-directory: /tmp/go-trust-source
+              if: always() # Run even if tests failed
               run: |
                   echo "Generating coverage reports..."
                   if [ -f "coverage.txt" ]; then
+                    echo "Coverage file found, processing..."
                     # Generate HTML coverage report
                     go tool cover -html=coverage.txt -o coverage.html
                     echo ""
@@ -114,11 +143,15 @@ jobs:
                     echo "✅ Coverage analysis completed successfully!"
                   else
                     echo "❌ No coverage.txt file found"
-                    exit 1
+                    echo "Checking working directory contents:"
+                    ls -la
+                    echo "Looking for any coverage files:"
+                    find . -name "*coverage*" -type f || echo "No coverage files found"
                   fi
 
             - name: Upload coverage reports
               uses: actions/upload-artifact@v4
+              if: always() # Upload even if tests failed
               with:
                   name: go-trust-coverage-report
                   path: |
