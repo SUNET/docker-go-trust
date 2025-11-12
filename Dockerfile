@@ -19,7 +19,6 @@ WORKDIR /deps
 COPY  docker-go-trust/go.mod  docker-go-trust/go.sum ./
 
 # Download dependencies according to  docker-go-trust specifications
-# This gives you full control over versions, including SUNET-specific forks
 RUN go mod download
 
 # Source stage - get go-trust source code
@@ -46,7 +45,7 @@ WORKDIR /build
 COPY --from=source /src/ ./
 
 # Copy your controlled dependencies from  docker-go-trust
-COPY  docker-go-trust/go.mod  docker-go-trust/go.sum /tmp/controlled-deps/
+COPY  ./go.mod ./go.sum /tmp/controlled-deps/
 
 # Create a hybrid go.mod: go-trust module name + controlled dependencies
 RUN echo 'module github.com/SUNET/go-trust' > go.mod.new && \
@@ -62,7 +61,7 @@ RUN echo 'module github.com/SUNET/go-trust' > go.mod.new && \
     mv go.mod.new go.mod
 
 # Use your controlled go.sum
-COPY  docker-go-trust/go.sum ./
+COPY  ./go.sum ./
 
 # Download dependencies with  controlled versions
 RUN go mod tidy && go mod download && go mod verify
@@ -97,9 +96,9 @@ WORKDIR /app
 COPY --from=builder /build/go-trust .
 
 # Copy your service-specific configuration
-COPY  docker-go-trust/config/ /etc/go-trust/
-COPY  docker-go-trust/pipeline.yaml ./pipeline.yaml
-COPY  docker-go-trust/start.sh ./start.sh
+COPY  ./config/ /etc/go-trust/
+COPY  ./test-tl-setup/pipeline.yaml ./pipeline.yaml
+COPY  ./start.sh ./start.sh
 
 # Make binary and script executable
 USER root
@@ -109,7 +108,6 @@ USER gotrust
 # Expose the service port
 EXPOSE 6001
 
-# Health check for the service
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:6001/health || exit 1
 

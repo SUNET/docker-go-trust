@@ -12,7 +12,7 @@ help: ## Show this help message
 
 build: ## Build the Docker image
 	@echo "Building go-trust-service containerized image with custom LOTL..."
-	docker build -f Dockerfile -t go-trust-service:latest ..
+	docker build -f Dockerfile -t go-trust-service:latest .
 
 
 run: build ## Build and run go-trust-service with docker-compose
@@ -57,9 +57,9 @@ shell: ## Get shell access to running container
 
 config: ## Validate configuration
 	@echo "Validating configuration..."
-	@if [ -f config/config.example.json ]; then \
+	@if [ -f config/config.example.yaml ]; then \
 		echo "✓ Config file exists"; \
-		cat config/config.example.json | jq . > /dev/null && echo "✓ Config is valid JSON" || echo "✗ Invalid JSON"; \
+		yq eval '.' config/config.example.yaml > /dev/null && echo "✓ Config is valid YAML" || echo "✗ Invalid YAML"; \
 	else \
 		echo "✗ Config file missing"; \
 	fi

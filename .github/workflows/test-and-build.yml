@@ -89,14 +89,14 @@ jobs:
               run: |
                   echo "Verifying dependencies..."
                   go mod verify
-                  echo "✅ Dependencies downloaded and verified"
+                  echo "DONE Dependencies downloaded and verified"
 
             - name: Build
               working-directory: /tmp/go-trust-source
               run: |
                   echo "Building all packages..."
                   go build -v ./...
-                  echo "✅ Build successful"
+                  echo "DONE Build successful"
 
             - name: Run tests with coverage
               working-directory: /tmp/go-trust-source
@@ -124,9 +124,9 @@ jobs:
                     
                     # Create coverage badge data for potential future use
                     echo "COVERAGE=${COVERAGE}" >> $GITHUB_ENV
-                    echo "✅ Coverage analysis completed successfully!"
+                    echo "DONE Coverage analysis completed successfully!"
                   else
-                    echo "❌ No coverage.txt file found"
+                    echo "FAIL No coverage.txt file found"
                     echo "Checking working directory contents:"
                     ls -la
                     echo "Looking for any coverage files:"
@@ -144,8 +144,8 @@ jobs:
 
             - name: Display test results summary
               run: |
-                  echo "🎉 Test and Coverage Summary:"
-                  echo "✅ All go-trust tests passed"
-                  echo "✅ Coverage report generated"
-                  echo "✅ Using docker-go-trust controlled dependencies"
-                  echo "📊 Coverage: ${COVERAGE}%"
+                  echo "DONE Test and Coverage Summary:"
+                  echo "DONE All go-trust tests passed"
+                  echo "DONE Coverage report generated"
+                  echo "DONE Using docker-go-trust controlled dependencies"
+                  echo "DONE Coverage: ${COVERAGE}%"
