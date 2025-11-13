@@ -1,8 +1,8 @@
 version: "3.8"
 
 services:
-  go-trust-service:
-    image: go-trust-service:latest
+  docker-go-trust:
+    image: docker-go-trust:latest
     build:
       context: .
       dockerfile: ./Dockerfile

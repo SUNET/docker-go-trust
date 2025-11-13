@@ -5,9 +5,8 @@ triggers:
 git:
   branches:
     - main
-    - Fix-dockerfile
 managed_scripts:
-   - docker_tag.sh
-docker_name: go-trust-containerized
+  - docker_tag.sh
+docker_name: docker-go-trust
 builders:
   - docker

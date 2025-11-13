@@ -109,7 +109,7 @@ USER gotrust
 EXPOSE 6001
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:6001/health || exit 1
+    CMD curl -f http://127.0.0.1:6001/healthz || exit 1
 
 # Run go-trust using start script with environment variables
 CMD ["./start.sh"]

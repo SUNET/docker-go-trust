@@ -1,25 +1,27 @@
-# Go-Trust Service Pipeline Configuration
-# This pipeline loads TSLs and creates certificate pools for API validation
+# Basic Usage Example for Go-Trust TSL Pipeline
+# This example demonstrates the essential functionality:
+# 1. Loading a TSL from a URL
+# 2. Setting basic fetch options
+# 3. Creating a certificate pool
+# 4. Publishing the TSL to a local directory
 
-# Step 1: Configure fetch options for robust TSL loading
+# Step 1: Set fetch options
 - set-fetch-options:
-    - max-depth:2
-    - user-agent:Go-Trust-Service/1.0
-    - timeout:60s
-    - accept:application/xml,text/xml
+      - max-depth:3
+      - user-agent:Go-Trust/1.0
+      - timeout:30s
 
-# Step 2: Load the custom LOTL from GitHub
+# Step 2: Load a TSL from the EU trusted list
 - load:
-    - https://raw.githubusercontent.com/AniaAlex/comprehensive-test-setup/refs/heads/main/test-trust-lotl/lotl.xml
+      - https://raw.githubusercontent.com/AniaAlex/comprehensive-test-setup/refs/heads/main/test-trust-lotl/lotl.xml
 
-# Step 3: Log loaded TSLs
+# Step 3: Log information about the loaded TSL
 - log:
-    - "Loaded custom LOTL and referenced TSLs from GitHub"
+      - "Loaded TSL with %d trust service providers"
 
-# Step 4: Create comprehensive certificate pool for API validation
+# Step 4: Select certificates to create a certificate pool
 - select:
-    - include-referenced  # Include certificates from all referenced TSLs
-
-# Step 5: Log certificate pool creation
-- log:
-    - "Certificate pool created - service ready for API requests"
+      - include-referenced # Include all certificates
+      - service-type:http://uri.etsi.org/TrstSvc/Svctype/CA/QC # QC certificates
+      - status-logic:and # Require all conditions to match
+      - status:http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted # Only granted

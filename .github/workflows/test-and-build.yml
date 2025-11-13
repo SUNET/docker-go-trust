@@ -94,7 +94,7 @@ jobs:
             - name: Build
               working-directory: /tmp/go-trust-source
               run: |
-                  echo "Building all packages..."
+                  echo "Building all packages"
                   go build -v ./...
                   echo "DONE Build successful"
 
@@ -120,7 +120,7 @@ jobs:
                     
                     # Extract total coverage percentage
                     COVERAGE=$(go tool cover -func=coverage.txt | grep total | awk '{print $3}' | sed 's/%//' || echo "0")
-                    echo "📊 Total coverage: ${COVERAGE}%"
+                    echo " Total coverage: ${COVERAGE}%"
                     
                     # Create coverage badge data for potential future use
                     echo "COVERAGE=${COVERAGE}" >> $GITHUB_ENV
