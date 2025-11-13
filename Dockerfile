@@ -96,7 +96,7 @@ WORKDIR /app
 COPY --from=builder /build/go-trust .
 
 # Copy your service-specific configuration
-COPY  ./config/ /etc/go-trust/
+COPY  ./config/config.yaml /etc/go-trust/config.yaml
 COPY  ./test-tl-setup/pipeline.yaml ./pipeline.yaml
 COPY  ./start.sh ./start.sh
 
