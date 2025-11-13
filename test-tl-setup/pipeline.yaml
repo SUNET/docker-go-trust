@@ -7,21 +7,22 @@
 
 # Step 1: Set fetch options
 - set-fetch-options:
-      - max-depth:3
-      - user-agent:Go-Trust/1.0
-      - timeout:30s
+        - max-depth:3
+        - user-agent:Go-Trust/1.0
+        - timeout:30s
 
 # Step 2: Load a TSL from the EU trusted list
 - load:
-      - https://raw.githubusercontent.com/AniaAlex/comprehensive-test-setup/refs/heads/main/test-trust-lotl/lotl.xml
-
-# Step 3: Log information about the loaded TSL
+        #- https://raw.githubusercontent.com/AniaAlex/comprehensive-test-setup/refs/heads/main/test-trust-lotl/lotl.xml
+        - https://raw.githubusercontent.com/SUNET/docker-go-trust/refs/heads/main/test-tl-setup/test-certs/lotl.xml
+# Step 3: Log 
+#information about the loaded TSL
 - log:
-      - "Loaded TSL with %d trust service providers"
+        - "Loaded TSL with %d trust service providers"
 
 # Step 4: Select certificates to create a certificate pool
 - select:
-      - include-referenced # Include all certificates
-      - service-type:http://uri.etsi.org/TrstSvc/Svctype/CA/QC # QC certificates
-      - status-logic:and # Require all conditions to match
-      - status:http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted # Only granted
+        - include-referenced # Include all certificates
+        - service-type:http://uri.etsi.org/TrstSvc/Svctype/CA/QC # QC certificates
+        - status-logic:and # Require all conditions to match
+        - status:http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted # Only granted
