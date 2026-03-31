@@ -16,8 +16,8 @@
           #- https://raw.githubusercontent.com/AniaAlex/comprehensive-test-setup/refs/heads/main/test-trust-lotl/lotl.xml
           #- https://raw.githubusercontent.com/SUNET/docker-go-trust/refs/heads/main/test-tl-setup/test-certs/lotl.xml
           #- https://raw.githubusercontent.com/AniaAlex/publish-trusted-list/refs/heads/main/lotl.xml
-          - https://github.com/AniaAlex/publish-trusted-list/blob/main/go-trust-ecosystem-612-old-concept/lotl.xml
-# Step 3: Log
+          - https://raw.githubusercontent.com/AniaAlex/publish-trusted-list/refs/heads/main/go-trust-ecosystem-612-old-concept/lotl.xml
+
 #information about the loaded TSL
 - log:
           - "Loaded TSL with %d trust service providers"
